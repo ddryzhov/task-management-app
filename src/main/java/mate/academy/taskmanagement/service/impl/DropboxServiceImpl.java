@@ -21,9 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class DropboxServiceImpl implements DropboxService {
-    private static final String DROPBOX_UPLOAD_URL = "https://content.dropboxapi.com/2/files/upload";
-    private static final String DROPBOX_DOWNLOAD_URL = "https://content.dropboxapi.com/2/files/download";
-    private static final String DROPBOX_DELETE_URL = "https://api.dropboxapi.com/2/files/delete_v2";
+    @Value("${dropbox.upload.url}")
+    private String dropboxUploadUrl;
+
+    @Value("${dropbox.download.url}")
+    private String dropboxDownloadUrl;
+
+    @Value("${dropbox.delete.url}")
+    private String dropboxDeleteUrl;
 
     @Value("${dropbox.access.token}")
     private String dropboxAccessToken;
@@ -36,7 +41,7 @@ public class DropboxServiceImpl implements DropboxService {
         String filePath = "/" + file.getOriginalFilename();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(DROPBOX_UPLOAD_URL))
+                .uri(URI.create(dropboxUploadUrl))
                 .header("Authorization", "Bearer " + dropboxAccessToken)
                 .header("Dropbox-API-Arg", "{\"path\": \"" + filePath + "\", "
                         + "\"mode\": \"add\", \"autorename\": true, \"mute\": false}")
@@ -71,7 +76,7 @@ public class DropboxServiceImpl implements DropboxService {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(DROPBOX_DOWNLOAD_URL))
+                .uri(URI.create(dropboxDownloadUrl))
                 .header("Authorization", "Bearer " + dropboxAccessToken)
                 .header("Dropbox-API-Arg", "{\"path\": \"" + dropboxFileId + "\"}")
                 .GET()
@@ -97,7 +102,7 @@ public class DropboxServiceImpl implements DropboxService {
     public void deleteFile(String dropboxFileId) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(DROPBOX_DELETE_URL))
+                .uri(URI.create(dropboxDeleteUrl))
                 .header("Authorization", "Bearer " + dropboxAccessToken)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{\"path\": \""
