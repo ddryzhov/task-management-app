@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-labels-table
+      author: daniil
+      changes:
+        - createTable:
+            tableName: labels
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: color
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
